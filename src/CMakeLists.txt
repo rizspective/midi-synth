@@ -6,7 +6,9 @@ juce_add_gui_app(${PROJECT_NAME}
 target_sources(${PROJECT_NAME}
     PRIVATE
         Main.cpp
-        MainComponent.cpp)
+        MainComponent.cpp
+        SynthAudioSource.cpp
+)
 
 target_compile_definitions(${PROJECT_NAME}
     PRIVATE
@@ -17,7 +19,14 @@ target_compile_definitions(${PROJECT_NAME}
 
 target_link_libraries(${PROJECT_NAME}
     PRIVATE
-        juce::juce_gui_extra
+        juce::juce_audio_basics
+        juce::juce_audio_devices
+        juce::juce_audio_utils
+        juce::juce_core
+        juce::juce_data_structures
+        juce::juce_events
+        juce::juce_graphics
+        juce::juce_gui_basics
     PUBLIC
         juce::juce_recommended_config_flags
         juce::juce_recommended_lto_flags

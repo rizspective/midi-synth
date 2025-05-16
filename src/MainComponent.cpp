@@ -1,20 +1,43 @@
 #include "MainComponent.h"
 
 MainComponent::MainComponent()
+    : keyboardComponent(keyboardState, juce::MidiKeyboardComponent::horizontalKeyboard),
+      synthAudioSource(keyboardState)
 {
-    setSize (600, 400);
+    addAndMakeVisible(keyboardComponent);
+    audioSourcePlayer.setSource(&synthAudioSource);
+
+    setSize(600, 200);
+    setAudioChannels(0, 2); // No inputs, stereo output
 }
 
-//==============================================================================
-void MainComponent::paint (juce::Graphics& g)
+MainComponent::~MainComponent()
 {
-    g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));
+    audioSourcePlayer.setSource(nullptr);
+    shutdownAudio();
+}
 
-    g.setFont (juce::FontOptions (16.0f));
-    g.setColour (juce::Colours::white);
-    g.drawText ("Hello World!", getLocalBounds(), juce::Justification::centred, true);
+void MainComponent::prepareToPlay(int samplesPerBlockExpected, double sampleRate)
+{
+    synthAudioSource.prepareToPlay(samplesPerBlockExpected, sampleRate);
+}
+
+void MainComponent::getNextAudioBlock(const juce::AudioSourceChannelInfo& bufferToFill)
+{
+    synthAudioSource.getNextAudioBlock(bufferToFill);
+}
+
+void MainComponent::releaseResources()
+{
+    synthAudioSource.releaseResources();
+}
+
+void MainComponent::paint(juce::Graphics& g)
+{
+    g.fillAll(getLookAndFeel().findColour(juce::ResizableWindow::backgroundColourId));
 }
 
 void MainComponent::resized()
 {
+    keyboardComponent.setBounds(10, 10, getWidth() - 20, getHeight() - 20);
 }
